@@ -16,10 +16,11 @@ export default function Result() {
       [index]: !prev[index],
     }));
   };
+  const API_URL = "https://smart-learning-assistant-k9rf.onrender.com";
 
   // ✅ Fetch plan from backend
   useEffect(() => {
-    fetch("http://localhost:5000/generate-plan", {
+    fetch(`${API_URL}/generate-plan`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
