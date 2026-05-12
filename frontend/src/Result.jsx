@@ -28,7 +28,13 @@ export default function Result() {
       body: JSON.stringify({ goal }),
     })
       .then((res) => res.json())
-      .then((data) => setPlan(data));
+      .then((data) => {
+        console.log(data);
+        setPlan(data);
+      })
+      .catch((err) => {
+        console.log("Frontend Error:", err);
+      });
   }, [goal]);
 
 
