@@ -70,10 +70,13 @@ app.post("/generate-plan", async (req, res) => {
         {
           params: {
             key: API_KEY,
-            q: topic,
+            q: `${goal} ${topic} programming tutorial`,
             part: "snippet",
             maxResults: 2,
             type: "video",
+            videoDuration: "medium",
+            relevanceLanguage: "en",
+            safeSearch: "strict",
           },
         }
       );
