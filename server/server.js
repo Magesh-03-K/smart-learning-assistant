@@ -12,7 +12,7 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
+  model: "gemini-pro",
 });
 
 const app = express();
@@ -45,7 +45,20 @@ app.post("/generate-plan", async (req, res) => {
       .trim();
 
 
-    const topics = JSON.parse(text);
+    let topics = [];
+
+    try {
+      topics = JSON.parse(cleanText);
+    } catch (e) {
+      console.log("Gemini JSON Parse Error:", cleanText);
+
+      topics = [
+        "Introduction",
+        "Basics",
+        "Practice",
+        "Mini Project"
+      ];
+    }
 
   ///////////////////////////new///////////////////
     const result = [];
