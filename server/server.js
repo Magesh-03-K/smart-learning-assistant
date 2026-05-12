@@ -53,12 +53,41 @@ app.post("/generate-plan", async (req, res) => {
     } catch (e) {
       console.log("Gemini Failed:", e.message);
 
-      topics = [
-        "Introduction",
-        "Basics",
-        "Practice",
-        "Mini Project",
-      ];
+  ///////////////////////////////////////////////////
+      if (goal.toLowerCase().includes("javascript")) {
+        topics = [
+          "JavaScript Variables",
+          "JavaScript Functions",
+          "JavaScript DOM",
+          "JavaScript Mini Project",
+        ];
+      } 
+      else if (goal.toLowerCase().includes("python")) {
+        topics = [
+          "Python Basics",
+          "Python Loops",
+          "Python Functions",
+          "Python Mini Project",
+        ];
+      }
+      else if (goal.toLowerCase().includes("react")) {
+        topics = [
+          "React Components",
+          "React Props and State",
+          "React Hooks",
+          "React Mini Project",
+        ];
+      }
+      else {
+        topics = [
+          `${goal} Basics`,
+          `${goal} Intermediate`,
+          `${goal} Practice`,
+          `${goal} Project`,
+        ];
+      }
+
+  ////////////////////////////////////////////////////
     }
 
   ///////////////////////////new///////////////////
