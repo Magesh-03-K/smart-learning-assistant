@@ -36,27 +36,28 @@ app.post("/generate-plan", async (req, res) => {
     ["Topic 1", "Topic 2", "Topic 3", "Topic 4"]
     `;
 
-    const aiResponse = await model.generateContent(prompt);
-
-    const text = aiResponse.response.text();
-    const cleanText = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-
-
     let topics = [];
 
     try {
+      const aiResponse = await model.generateContent(prompt);
+
+      const text = aiResponse.response.text();
+
+      const cleanText = text
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+
       topics = JSON.parse(cleanText);
+
     } catch (e) {
-      console.log("Gemini JSON Parse Error:", cleanText);
+      console.log("Gemini Failed:", e.message);
 
       topics = [
         "Introduction",
         "Basics",
         "Practice",
-        "Mini Project"
+        "Mini Project",
       ];
     }
 
