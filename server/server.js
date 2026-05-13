@@ -25,11 +25,15 @@ const API_KEY = process.env.YOUTUBE_API_KEY;
 app.post("/generate-plan", async (req, res) => {
   const { goal } = req.body;
 
+  const match = goal.match(/\d+/);
+
+  const totalDays = match ? parseInt(match[0]) : 7;
+
   try {
 
     ///////////////////////////new///////////////////
     const prompt = `
-    Create a 4-day learning roadmap for:
+    Create a ${totalDays}-day learning roadmap for:
     ${goal}
 
     Return ONLY JSON array format like:
@@ -79,12 +83,11 @@ app.post("/generate-plan", async (req, res) => {
         ];
       }
       else {
-        topics = [
-          `${goal} Basics`,
-          `${goal} Intermediate`,
-          `${goal} Practice`,
-          `${goal} Project`,
-        ];
+        topics = [];
+
+        for (let i = 1; i <= totalDays; i++) {
+          topics.push(`${goal} - Day ${i}`);
+        }
       }
 
   ////////////////////////////////////////////////////
