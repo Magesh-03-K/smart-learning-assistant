@@ -29,17 +29,28 @@ app.post("/generate-plan", async (req, res) => {
 
   const totalDays = match ? parseInt(match[0]) : 7;
 
+  const cleanGoal = goal.replace(/\d+\s*days?/i, "").trim();
+
   try {
 
     ///////////////////////////new///////////////////
     const prompt = `
-    Create a ${totalDays}-day learning roadmap for:
+    Create EXACTLY ${totalDays} topics for learning:
     ${goal}
 
-    Return ONLY JSON array format like:
-    ["Topic 1", "Topic 2", "Topic 3", "Topic 4"]
-    `;
+    RULES:
+    - Return ONLY a JSON array
+    - Do NOT add explanations
+    - Do NOT add markdown
+    - Do NOT return fewer or more than ${totalDays} topics
 
+    Example:
+    [
+      "Topic 1",
+      "Topic 2",
+      "Topic 3"
+    ]
+    `;
     let topics = [];
 
     try {
@@ -54,40 +65,23 @@ app.post("/generate-plan", async (req, res) => {
 
       topics = JSON.parse(cleanText);
 
+      if (topics.length > totalDays) {
+        topics = topics.slice(0, totalDays);
+      }
+
+      while (topics.length < totalDays) {
+        topics.push(`${goal} - Extra Topic ${topics.length + 1}`);
+      }
+
     } catch (e) {
       console.log("Gemini Failed:", e.message);
 
   ///////////////////////////////////////////////////
-      if (goal.toLowerCase().includes("javascript")) {
-        topics = [
-          "JavaScript Variables",
-          "JavaScript Functions",
-          "JavaScript DOM",
-          "JavaScript Mini Project",
-        ];
-      } 
-      else if (goal.toLowerCase().includes("python")) {
-        topics = [
-          "Python Basics",
-          "Python Loops",
-          "Python Functions",
-          "Python Mini Project",
-        ];
-      }
-      else if (goal.toLowerCase().includes("react")) {
-        topics = [
-          "React Components",
-          "React Props and State",
-          "React Hooks",
-          "React Mini Project",
-        ];
-      }
-      else {
-        topics = [];
+      // Fallback to hardcoded topics if Gemini fails
+      topics = [];
 
-        for (let i = 1; i <= totalDays; i++) {
-          topics.push(`${goal} - Day ${i}`);
-        }
+      for (let i = 1; i <= totalDays; i++) {
+        topics.push(`${goal} - Day ${i}`);
       }
 
   ////////////////////////////////////////////////////
@@ -102,7 +96,7 @@ app.post("/generate-plan", async (req, res) => {
         {
           params: {
             key: API_KEY,
-            q: `${goal} ${topic} programming tutorial`,
+            q: `${cleanGoal} ${topic} tutorial`,
             part: "snippet",
             maxResults: 2,
             type: "video",
