@@ -5,6 +5,10 @@ export default function Result() {
   const [plan, setPlan] = useState([]);
   const [completed, setCompleted] = useState({});
 
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   // ✅ Get goal from URL (GLOBAL)
   const params = new URLSearchParams(window.location.search);
   const goal = params.get("goal") || "default";
@@ -20,6 +24,8 @@ export default function Result() {
 
   // ✅ Fetch plan from backend
   useEffect(() => {
+    setLoading(true);
+
     fetch(`${API_URL}/generate-plan`, {
       method: "POST",
       headers: {
@@ -29,11 +35,14 @@ export default function Result() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setPlan(data);
+        setLoading(false);
       })
       .catch((err) => {
-        console.log("Frontend Error:", err);
+        console.log(err);
+
+        setError("Failed to generate roadmap");
+        setLoading(false);
       });
   }, [goal]);
 
@@ -59,6 +68,23 @@ export default function Result() {
   // ✅ Progress calculation
   const total = plan.length;
   const done = Object.values(completed).filter(Boolean).length;
+
+
+  if (loading) {
+    return (
+      <div className="container">
+        <h2>🚀 Generating your AI roadmap...</h2>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container">
+        <h2>{error}</h2>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
