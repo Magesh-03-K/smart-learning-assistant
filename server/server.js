@@ -1,12 +1,19 @@
 import express from "express";
 import cors from "cors";
 import axios from "axios";
+import mongoose from "mongoose";
+import Plan from "./models/Plan.js";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 /////////////////////////////////to hide api key from github and other public repos, create a .env file in the server folder with the following content://////
 import dotenv from "dotenv";
 dotenv.config();
+
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log(err));
 ///////////////////////////////////////////////////////////////////////////////
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -116,6 +123,10 @@ app.post("/generate-plan", async (req, res) => {
 
       result.push({ topic, videos });
     }
+    await Plan.create({
+      goal,
+      topics,
+    });
     res.json(result);
   
   } catch (err) {
